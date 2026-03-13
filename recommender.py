@@ -11,27 +11,21 @@ def recommend_professions_top5(
     interest_island_weights,
     top_n=5
 ):
-    # 1. Кластер ученика
     cluster = df_clustered.loc[df_clustered["ID"] == student_id, "cluster"].values[0]
     cluster_islands = cluster_to_islands.get(cluster, [])
 
-    # 2. Острова по интересам + веса
     island_scores = {}
 
     for interest in interests:
         for island, w in interest_island_weights.get(interest, {}).items():
             island_scores[island] = island_scores.get(island, 0) + w
 
-    # 3. Итоговые острова
     final_islands = list(dict.fromkeys(cluster_islands + list(island_scores.keys())))
 
-    # 4. Фильтрация нерелевантных островов
     final_islands = [i for i in final_islands if island_scores.get(i, 0) > 0]
 
-    # 5. Сортировка островов по весу
     final_islands = sorted(final_islands, key=lambda x: island_scores.get(x, 0), reverse=True)
 
-    # 6. Сбор профессий
     island_to_professions = {}
     for island in final_islands:
         profs = career_islands.get(island, {}).get("directions", {})
@@ -40,7 +34,6 @@ def recommend_professions_top5(
             all_profs.extend(prof_list)
         island_to_professions[island] = list(set(all_profs))
 
-    # 7. Оценка профессий
     def score_profession(prof, island):
         score = 0
 
@@ -62,7 +55,6 @@ def recommend_professions_top5(
 
         return score
 
-    # 8. Формирование результата
     result = {}
     for island in final_islands[:3]:  # ← ТОП‑3 острова
         profs = island_to_professions[island]
@@ -87,4 +79,5 @@ def pretty_format(recs):
         text += "```\n\n"
 
     return text
+
 
