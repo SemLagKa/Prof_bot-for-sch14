@@ -1,7 +1,7 @@
 import os
 import requests
 
-GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY", "AIzaSyCpeHp24V_737u-vgbFLUW1v03Pk8t9CNY")  # временный дефолт, но лучше реально через env
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY", "YOUR_API")
 
 def search_books_google_smart(query_list, max_results=5, lang="ru"):
     books = []
@@ -53,7 +53,6 @@ def search_books_google_smart(query_list, max_results=5, lang="ru"):
                 "source": "Google Books",
             })
 
-    # Убираем дубликаты по названию
     unique = {b["title"]: b for b in books}
     return list(unique.values())
 
@@ -77,3 +76,4 @@ def get_books_for_profession_smart(profession, profession_to_topics, topic_to_qu
         all_books[topic] = books
 
     return all_books
+
