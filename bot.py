@@ -17,13 +17,11 @@ dp = Dispatcher()
 data = load_all_data()
 
 
-# --- FSM ---
 class Form(StatesGroup):
     user_id = State()
     interests = State()
 
 
-# --- Команда /start ---
 @dp.message(Command("start"))
 async def start(message: types.Message, state: FSMContext):
     await message.answer(
@@ -34,7 +32,6 @@ async def start(message: types.Message, state: FSMContext):
     await state.set_state(Form.user_id)
 
 
-# --- Шаг 1: ввод ID ---
 @dp.message(Form.user_id)
 async def process_id(message: types.Message, state: FSMContext):
     user_id = message.text.strip()
@@ -54,7 +51,6 @@ async def process_id(message: types.Message, state: FSMContext):
     await state.set_state(Form.interests)
 
 
-# --- Шаг 2: ввод интересов ---
 @dp.message(Form.interests)
 async def process_interests(message: types.Message, state: FSMContext):
     interests = [i.strip().lower() for i in message.text.split(",")]
@@ -115,12 +111,10 @@ async def process_interests(message: types.Message, state: FSMContext):
         interest_island_weights=data["interest_island_weights"]
     )
 
-    # --- КНИГИ ПО ИНТЕРЕСАМ ---
     books = search_books_google_smart(interests, max_results=5)
 
     text = pretty_format(recs)
 
-    # --- ДОБАВЛЯЕМ КНИГИ ---
     if books:
         text += "\n📚 *Подборка книг по твоим интересам:*\n\n"
         for b in books[:5]:
@@ -144,3 +138,4 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
